@@ -1,0 +1,7 @@
+*parquet*
+/data/
+/model_predictions/
+*venv*
+*vscode*
+*figures*
+*parquet*
