@@ -247,7 +247,7 @@ model_names += to_add_to_model_names
 model_names_ae += to_add_to_model_names_ae
 
 ##################################################################################################
-# Print local cross_validation of all models we have (single models and combined_models)
+# Print local MAE of all models we have (single models and combined_models)
 
 data["horizon_copy"] = data["horizon"]
 
