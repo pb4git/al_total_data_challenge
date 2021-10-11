@@ -5,10 +5,8 @@
 @author: paul
 """
 
-import os
 import numpy as np
 import pandas as pd
-import catboost
 import lightgbm as lgb
 from al_total_data_challenge.readrawdata import readrawdata
 from al_total_data_challenge.split import get_timeseries_split_boundaries
@@ -18,6 +16,7 @@ from al_total_data_challenge.regressors import (
     PowerCBRegressor,
     QuantileCBRegressor,
 )
+import catboost
 from al_total_data_challenge.ts_split_predict import ts_split_predict
 
 pd.set_option("display.max_rows", 4000)
@@ -189,246 +188,246 @@ data = data.reset_index()
 # Main list of models that are trained
 
 models = [
-    # {
-    #     "name": "a",
-    #     "horizons": [slice(None)],
-    #     "farms": [slice(None)],
-    #     "hh4ofdays": [slice(None)],
-    #     "model": SqrtSquareCBRegressor(
-    #         catboost.CatBoostRegressor(
-    #             n_estimators=20,
-    #             bootstrap_type="Bernoulli",
-    #             loss_function="MAPE",
-    #             learning_rate=0.016,
-    #             depth=8,
-    #             l2_leaf_reg=0.08,
-    #             colsample_bylevel=0.75,
-    #             random_strength=0.4,
-    #             subsample=0.65,
-    #             verbose=0,
-    #         )
-    #     ),
-    # },
-    # {
-    #     "name": "b",
-    #     "horizons": [slice(None)],
-    #     "farms": list(range(1, 7)),
-    #     "hh4ofdays": [slice(None)],
-    #     "model": SqrtSquareCBRegressor(
-    #         catboost.CatBoostRegressor(
-    #             n_estimators=12,
-    #             bootstrap_type="Bernoulli",
-    #             loss_function="MAPE",
-    #             learning_rate=0.016,
-    #             depth=8,
-    #             l2_leaf_reg=0.08,
-    #             colsample_bylevel=0.75,
-    #             random_strength=0.4,
-    #             subsample=0.65,
-    #             verbose=0,
-    #         )
-    #     ),
-    # },
-    # {
-    #     "name": "c",
-    #     "horizons": list(range(0, 4)),
-    #     "farms": [slice(None)],
-    #     "hh4ofdays": [slice(None)],
-    #     "model": SqrtSquareCBRegressor(
-    #         catboost.CatBoostRegressor(
-    #             n_estimators=12,
-    #             bootstrap_type="Bernoulli",
-    #             loss_function="MAPE",
-    #             learning_rate=0.016,
-    #             depth=8,
-    #             l2_leaf_reg=0.08,
-    #             colsample_bylevel=0.75,
-    #             random_strength=0.4,
-    #             subsample=0.65,
-    #             verbose=0,
-    #         )
-    #     ),
-    # },
-    # {
-    #     "name": "d",
-    #     "horizons": [slice(None)],
-    #     "farms": [slice(None)],
-    #     "hh4ofdays": list(range(0, 6)),
-    #     "model": SqrtSquareCBRegressor(
-    #         catboost.CatBoostRegressor(
-    #             n_estimators=12,
-    #             bootstrap_type="Bernoulli",
-    #             loss_function="MAPE",
-    #             learning_rate=0.016,
-    #             depth=8,
-    #             l2_leaf_reg=0.08,
-    #             colsample_bylevel=0.75,
-    #             random_strength=0.4,
-    #             subsample=0.65,
-    #             verbose=0,
-    #         )
-    #     ),
-    # },
-    # {
-    #     "name": "a.quant",
-    #     "horizons": [slice(None)],
-    #     "farms": [slice(None)],
-    #     "hh4ofdays": [slice(None)],
-    #     "model": QuantileCBRegressor(
-    #         catboost.CatBoostRegressor(
-    #             n_estimators=20,
-    #             bootstrap_type="Bernoulli",
-    #             loss_function="MAPE",
-    #             learning_rate=0.016,
-    #             depth=8,
-    #             l2_leaf_reg=0.08,
-    #             colsample_bylevel=0.75,
-    #             random_strength=0.4,
-    #             subsample=0.65,
-    #             verbose=0,
-    #         )
-    #     ),
-    # },
-    # {
-    #     "name": "b.quant",
-    #     "horizons": [slice(None)],
-    #     "farms": list(range(1, 7)),
-    #     "hh4ofdays": [slice(None)],
-    #     "model": QuantileCBRegressor(
-    #         catboost.CatBoostRegressor(
-    #             n_estimators=12,
-    #             bootstrap_type="Bernoulli",
-    #             loss_function="MAPE",
-    #             learning_rate=0.016,
-    #             depth=8,
-    #             l2_leaf_reg=0.08,
-    #             colsample_bylevel=0.75,
-    #             random_strength=0.4,
-    #             subsample=0.65,
-    #             verbose=0,
-    #         )
-    #     ),
-    # },
-    # {
-    #     "name": "c.quant",
-    #     "horizons": list(range(0, 4)),
-    #     "farms": [slice(None)],
-    #     "hh4ofdays": [slice(None)],
-    #     "model": QuantileCBRegressor(
-    #         catboost.CatBoostRegressor(
-    #             n_estimators=12,
-    #             bootstrap_type="Bernoulli",
-    #             loss_function="MAPE",
-    #             learning_rate=0.016,
-    #             depth=8,
-    #             l2_leaf_reg=0.08,
-    #             colsample_bylevel=0.75,
-    #             random_strength=0.4,
-    #             subsample=0.65,
-    #             verbose=0,
-    #         )
-    #     ),
-    # },
-    # {
-    #     "name": "d.quant",
-    #     "horizons": [slice(None)],
-    #     "farms": [slice(None)],
-    #     "hh4ofdays": list(range(0, 6)),
-    #     "model": QuantileCBRegressor(
-    #         catboost.CatBoostRegressor(
-    #             n_estimators=12,
-    #             bootstrap_type="Bernoulli",
-    #             loss_function="MAPE",
-    #             learning_rate=0.016,
-    #             depth=8,
-    #             l2_leaf_reg=0.08,
-    #             colsample_bylevel=0.75,
-    #             random_strength=0.4,
-    #             subsample=0.65,
-    #             verbose=0,
-    #         )
-    #     ),
-    # },
-    # {
-    #     "name": "a.power",
-    #     "horizons": [slice(None)],
-    #     "farms": [slice(None)],
-    #     "hh4ofdays": [slice(None)],
-    #     "model": PowerCBRegressor(
-    #         catboost.CatBoostRegressor(
-    #             n_estimators=20,
-    #             bootstrap_type="Bernoulli",
-    #             loss_function="MAPE",
-    #             learning_rate=0.016,
-    #             depth=8,
-    #             l2_leaf_reg=0.08,
-    #             colsample_bylevel=0.75,
-    #             random_strength=0.4,
-    #             subsample=0.65,
-    #             verbose=0,
-    #         )
-    #     ),
-    # },
-    # {
-    #     "name": "b.power",
-    #     "horizons": [slice(None)],
-    #     "farms": list(range(1, 7)),
-    #     "hh4ofdays": [slice(None)],
-    #     "model": PowerCBRegressor(
-    #         catboost.CatBoostRegressor(
-    #             n_estimators=12,
-    #             bootstrap_type="Bernoulli",
-    #             loss_function="MAPE",
-    #             learning_rate=0.016,
-    #             depth=8,
-    #             l2_leaf_reg=0.08,
-    #             colsample_bylevel=0.75,
-    #             random_strength=0.4,
-    #             subsample=0.65,
-    #             verbose=0,
-    #         )
-    #     ),
-    # },
-    # {
-    #     "name": "c.power",
-    #     "horizons": list(range(0, 4)),
-    #     "farms": [slice(None)],
-    #     "hh4ofdays": [slice(None)],
-    #     "model": PowerCBRegressor(
-    #         catboost.CatBoostRegressor(
-    #             n_estimators=12,
-    #             bootstrap_type="Bernoulli",
-    #             loss_function="MAPE",
-    #             learning_rate=0.016,
-    #             depth=8,
-    #             l2_leaf_reg=0.08,
-    #             colsample_bylevel=0.75,
-    #             random_strength=0.4,
-    #             subsample=0.65,
-    #             verbose=0,
-    #         )
-    #     ),
-    # },
-    # {
-    #     "name": "d.power",
-    #     "horizons": [slice(None)],
-    #     "farms": [slice(None)],
-    #     "hh4ofdays": list(range(0, 6)),
-    #     "model": PowerCBRegressor(
-    #         catboost.CatBoostRegressor(
-    #             n_estimators=12,
-    #             bootstrap_type="Bernoulli",
-    #             loss_function="MAPE",
-    #             learning_rate=0.016,
-    #             depth=8,
-    #             l2_leaf_reg=0.08,
-    #             colsample_bylevel=0.75,
-    #             random_strength=0.4,
-    #             subsample=0.65,
-    #             verbose=0,
-    #         )
-    #     ),
-    # },
+    {
+        "name": "a",
+        "horizons": [slice(None)],
+        "farms": [slice(None)],
+        "hh4ofdays": [slice(None)],
+        "model": SqrtSquareCBRegressor(
+            catboost.CatBoostRegressor(
+                n_estimators=2000,
+                bootstrap_type="Bernoulli",
+                loss_function="MAPE",
+                learning_rate=0.016,
+                depth=8,
+                l2_leaf_reg=0.08,
+                colsample_bylevel=0.75,
+                random_strength=0.4,
+                subsample=0.65,
+                verbose=0,
+            )
+        ),
+    },
+    {
+        "name": "b",
+        "horizons": [slice(None)],
+        "farms": list(range(1, 7)),
+        "hh4ofdays": [slice(None)],
+        "model": SqrtSquareCBRegressor(
+            catboost.CatBoostRegressor(
+                n_estimators=1200,
+                bootstrap_type="Bernoulli",
+                loss_function="MAPE",
+                learning_rate=0.016,
+                depth=8,
+                l2_leaf_reg=0.08,
+                colsample_bylevel=0.75,
+                random_strength=0.4,
+                subsample=0.65,
+                verbose=0,
+            )
+        ),
+    },
+    {
+        "name": "c",
+        "horizons": list(range(0, 4)),
+        "farms": [slice(None)],
+        "hh4ofdays": [slice(None)],
+        "model": SqrtSquareCBRegressor(
+            catboost.CatBoostRegressor(
+                n_estimators=1200,
+                bootstrap_type="Bernoulli",
+                loss_function="MAPE",
+                learning_rate=0.016,
+                depth=8,
+                l2_leaf_reg=0.08,
+                colsample_bylevel=0.75,
+                random_strength=0.4,
+                subsample=0.65,
+                verbose=0,
+            )
+        ),
+    },
+    {
+        "name": "d",
+        "horizons": [slice(None)],
+        "farms": [slice(None)],
+        "hh4ofdays": list(range(0, 6)),
+        "model": SqrtSquareCBRegressor(
+            catboost.CatBoostRegressor(
+                n_estimators=1200,
+                bootstrap_type="Bernoulli",
+                loss_function="MAPE",
+                learning_rate=0.016,
+                depth=8,
+                l2_leaf_reg=0.08,
+                colsample_bylevel=0.75,
+                random_strength=0.4,
+                subsample=0.65,
+                verbose=0,
+            )
+        ),
+    },
+    {
+        "name": "a.quant",
+        "horizons": [slice(None)],
+        "farms": [slice(None)],
+        "hh4ofdays": [slice(None)],
+        "model": QuantileCBRegressor(
+            catboost.CatBoostRegressor(
+                n_estimators=2000,
+                bootstrap_type="Bernoulli",
+                loss_function="MAPE",
+                learning_rate=0.016,
+                depth=8,
+                l2_leaf_reg=0.08,
+                colsample_bylevel=0.75,
+                random_strength=0.4,
+                subsample=0.65,
+                verbose=0,
+            )
+        ),
+    },
+    {
+        "name": "b.quant",
+        "horizons": [slice(None)],
+        "farms": list(range(1, 7)),
+        "hh4ofdays": [slice(None)],
+        "model": QuantileCBRegressor(
+            catboost.CatBoostRegressor(
+                n_estimators=1200,
+                bootstrap_type="Bernoulli",
+                loss_function="MAPE",
+                learning_rate=0.016,
+                depth=8,
+                l2_leaf_reg=0.08,
+                colsample_bylevel=0.75,
+                random_strength=0.4,
+                subsample=0.65,
+                verbose=0,
+            )
+        ),
+    },
+    {
+        "name": "c.quant",
+        "horizons": list(range(0, 4)),
+        "farms": [slice(None)],
+        "hh4ofdays": [slice(None)],
+        "model": QuantileCBRegressor(
+            catboost.CatBoostRegressor(
+                n_estimators=1200,
+                bootstrap_type="Bernoulli",
+                loss_function="MAPE",
+                learning_rate=0.016,
+                depth=8,
+                l2_leaf_reg=0.08,
+                colsample_bylevel=0.75,
+                random_strength=0.4,
+                subsample=0.65,
+                verbose=0,
+            )
+        ),
+    },
+    {
+        "name": "d.quant",
+        "horizons": [slice(None)],
+        "farms": [slice(None)],
+        "hh4ofdays": list(range(0, 6)),
+        "model": QuantileCBRegressor(
+            catboost.CatBoostRegressor(
+                n_estimators=1200,
+                bootstrap_type="Bernoulli",
+                loss_function="MAPE",
+                learning_rate=0.016,
+                depth=8,
+                l2_leaf_reg=0.08,
+                colsample_bylevel=0.75,
+                random_strength=0.4,
+                subsample=0.65,
+                verbose=0,
+            )
+        ),
+    },
+    {
+        "name": "a.power",
+        "horizons": [slice(None)],
+        "farms": [slice(None)],
+        "hh4ofdays": [slice(None)],
+        "model": PowerCBRegressor(
+            catboost.CatBoostRegressor(
+                n_estimators=2000,
+                bootstrap_type="Bernoulli",
+                loss_function="MAPE",
+                learning_rate=0.016,
+                depth=8,
+                l2_leaf_reg=0.08,
+                colsample_bylevel=0.75,
+                random_strength=0.4,
+                subsample=0.65,
+                verbose=0,
+            )
+        ),
+    },
+    {
+        "name": "b.power",
+        "horizons": [slice(None)],
+        "farms": list(range(1, 7)),
+        "hh4ofdays": [slice(None)],
+        "model": PowerCBRegressor(
+            catboost.CatBoostRegressor(
+                n_estimators=1200,
+                bootstrap_type="Bernoulli",
+                loss_function="MAPE",
+                learning_rate=0.016,
+                depth=8,
+                l2_leaf_reg=0.08,
+                colsample_bylevel=0.75,
+                random_strength=0.4,
+                subsample=0.65,
+                verbose=0,
+            )
+        ),
+    },
+    {
+        "name": "c.power",
+        "horizons": list(range(0, 4)),
+        "farms": [slice(None)],
+        "hh4ofdays": [slice(None)],
+        "model": PowerCBRegressor(
+            catboost.CatBoostRegressor(
+                n_estimators=1200,
+                bootstrap_type="Bernoulli",
+                loss_function="MAPE",
+                learning_rate=0.016,
+                depth=8,
+                l2_leaf_reg=0.08,
+                colsample_bylevel=0.75,
+                random_strength=0.4,
+                subsample=0.65,
+                verbose=0,
+            )
+        ),
+    },
+    {
+        "name": "d.power",
+        "horizons": [slice(None)],
+        "farms": [slice(None)],
+        "hh4ofdays": list(range(0, 6)),
+        "model": PowerCBRegressor(
+            catboost.CatBoostRegressor(
+                n_estimators=1200,
+                bootstrap_type="Bernoulli",
+                loss_function="MAPE",
+                learning_rate=0.016,
+                depth=8,
+                l2_leaf_reg=0.08,
+                colsample_bylevel=0.75,
+                random_strength=0.4,
+                subsample=0.65,
+                verbose=0,
+            )
+        ),
+    },
     {
         "name": "a.lgbm",
         "horizons": [slice(None)],
@@ -436,7 +435,7 @@ models = [
         "hh4ofdays": [slice(None)],
         "model": SqrtSquareLGBMRegressor(
             lgb.LGBMRegressor(
-                n_estimators=12,
+                n_estimators=1800,
                 learning_rate=0.02,
                 objective="mape",
                 colsample_bytree=0.8,
@@ -451,7 +450,7 @@ models = [
         "hh4ofdays": [slice(None)],
         "model": SqrtSquareLGBMRegressor(
             lgb.LGBMRegressor(
-                n_estimators=12,
+                n_estimators=1200,
                 learning_rate=0.02,
                 objective="mape",
                 colsample_bytree=0.8,
@@ -466,7 +465,7 @@ models = [
         "hh4ofdays": [slice(None)],
         "model": SqrtSquareLGBMRegressor(
             lgb.LGBMRegressor(
-                n_estimators=12,
+                n_estimators=1200,
                 learning_rate=0.02,
                 objective="mape",
                 colsample_bytree=0.8,
@@ -481,7 +480,7 @@ models = [
         "hh4ofdays": list(range(0, 6)),
         "model": SqrtSquareLGBMRegressor(
             lgb.LGBMRegressor(
-                n_estimators=12,
+                n_estimators=1200,
                 learning_rate=0.02,
                 objective="mape",
                 colsample_bytree=0.8,
