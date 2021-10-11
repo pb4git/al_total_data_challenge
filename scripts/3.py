@@ -14,7 +14,7 @@ np.random.seed(RANDOM_SEED)
 
 
 _, test_dates = al_total_data_challenge.readrawdata.readrawdata(
-    r"C:\Users\paul.berhaut\projects\al_total_data_challenge\data\challenge_19_data\\"
+    r"..\data\challenge_19_data\\"
 )
 
 data = pd.read_parquet(
@@ -35,6 +35,7 @@ data = data.set_index(["forecast_for", "forecast_from", "is_test"]).sort_index()
 data = data.reset_index()
 
 ##################################################################################################
+# Read some of the models that were created by 2_single_farm.py and 2_all_farms.py
 
 data = data.set_index(["forecast_for", "farm_number", "horizon", "forecast_from"])
 
@@ -246,8 +247,8 @@ model_names += to_add_to_model_names
 model_names_ae += to_add_to_model_names_ae
 
 ##################################################################################################
+# Print local cross_validation of all models we have (single models and combined_models)
 
-#%%
 data["horizon_copy"] = data["horizon"]
 
 
